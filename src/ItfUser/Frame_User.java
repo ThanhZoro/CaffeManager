@@ -6,6 +6,7 @@
 package ItfUser;
 
 import ItfUser.PanelBanHang.PanelBanHang;
+import ItfUser.PanelThongKe.PanelThongKe;
 
 /**
  *
@@ -69,6 +70,11 @@ public class Frame_User extends javax.swing.JFrame {
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/staff.png"))); // NOI18N
         jButton5.setText("Thống Kê  ");
         jButton5.setBorder(null);
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setBackground(new java.awt.Color(255, 255, 204));
         jButton6.setFont(new java.awt.Font("Times New Roman", 1, 15)); // NOI18N
@@ -182,6 +188,17 @@ public class Frame_User extends javax.swing.JFrame {
         panelBanHang.validate();
         panelBanHang.repaint();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        PanelThongKe panelThongKe = new PanelThongKe();
+        panelThongKe.setBounds(0, 85, 1280, 630);
+        panelThongKe.setVisible(true);
+        this.getContentPane().add(panelThongKe);
+        
+        panelThongKe.validate();
+        panelThongKe.repaint();
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
