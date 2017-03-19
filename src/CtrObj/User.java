@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ItfLogin;
+package CtrObj;
 
 /**
  *
@@ -39,11 +39,6 @@ public class User {
     }
 
     public User() {
-    }
-
-    public User(String userName, int role) {
-        this.userName = userName;
-        this.role = role;
     }
 
     public User(String userName, String pass, int role) {

@@ -5,12 +5,14 @@
  */
 package CtrDatabase;
 
-import ItfLogin.User;
+import CtrObj.Ban;
+import CtrObj.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -41,31 +43,55 @@ public class DBConnection {
             cnn.close();
         }
     }
-    
-    public static User getUser(String name, String pass) throws ClassNotFoundException, SQLException, Exception
-    {
+
+    public static User getUser(String name, String pass) throws ClassNotFoundException, SQLException, Exception {
         User user;
         Connection cnn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         cnn = OpenDB();
-        if(cnn != null)
-        {
+        if (cnn != null) {
             String sql = "Select * from users where Username = ? and Password = ?";
             ps = cnn.prepareStatement(sql);
             ps.setString(1, name);
             ps.setString(2, pass);
             rs = ps.executeQuery();
-            if(rs.next())
-            {
+            if (rs.next()) {
                 String userName = rs.getString("Username");
+                String passWord = rs.getString("Password");
                 int role = rs.getInt("Role");
-                user = new User(userName,role);
+                user = new User(userName, passWord, role);
+                DBConnection.Close(rs, ps, cnn);
                 return user;
-            }
-            else
+            } else {
                 throw new Exception("Vui lòng kiểm tra lại tên tài khoản hoặc mật khẩu!");
+            }
         }
+        DBConnection.Close(rs, ps, cnn);
+        return null;
+    }
+
+    public static ArrayList<Ban> getBanActive() throws ClassNotFoundException, SQLException, Exception {
+        ArrayList<Ban> listBanActive = new ArrayList<>();
+        Connection cnn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        cnn = OpenDB();
+        if (cnn != null) {
+            String sql = "Select * from tables where Trangthai = ?";
+            ps = cnn.prepareStatement(sql);
+            ps.setString(1, "1"); //Trạng thái active bằng 1
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                int maBan = rs.getInt("MaBan");
+                int khuVuc = rs.getInt("KhuVuc");
+                int trangThai = rs.getInt("Trangthai");
+                listBanActive.add(new Ban(maBan, khuVuc, trangThai));
+            }
+            DBConnection.Close(rs, ps, cnn);
+            return listBanActive;
+        }
+        DBConnection.Close(rs, ps, cnn);
         return null;
     }
 }

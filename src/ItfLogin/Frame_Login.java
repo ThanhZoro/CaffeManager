@@ -5,6 +5,7 @@
  */
 package ItfLogin;
 
+import CtrObj.User;
 import CtrDatabase.DBConnection;
 import ItfAdmin.Frame_Admin;
 import ItfUser.Frame_User;
@@ -244,7 +245,7 @@ public class Frame_Login extends javax.swing.JFrame implements ActionListener {
                         frame_Admin.setVisible(true);
                         this.setVisible(false);
                     } else if (role == 2) {
-                        Frame_User frame_User = new Frame_User();
+                        Frame_User frame_User = new Frame_User(user);
                         frame_User.setVisible(true);
                         this.setVisible(false);
                     }
