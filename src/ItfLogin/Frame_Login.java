@@ -5,17 +5,32 @@
  */
 package ItfLogin;
 
+import CtrDatabase.DBConnection;
+import ItfAdmin.Frame_Admin;
+import ItfUser.Frame_User;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Zoro
  */
-public class Frame_Login extends javax.swing.JFrame {
+public class Frame_Login extends javax.swing.JFrame implements ActionListener {
 
     /**
      * Creates new form Frame_Login
      */
+    User user;
+
     public Frame_Login() {
         initComponents();
+        jtfPass.setActionCommand("actionLogin");
+        jtfPass.addActionListener(this);
+        jbtnDangNhap.addActionListener(this);
     }
 
     /**
@@ -26,15 +41,14 @@ public class Frame_Login extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel2 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        jbtnDangNhap = new javax.swing.JButton();
+        jbtnThoat = new javax.swing.JButton();
+        jtfPass = new javax.swing.JPasswordField();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jtfTenDangNhap = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -42,22 +56,28 @@ public class Frame_Login extends javax.swing.JFrame {
 
         jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 0, 255), 5, true));
 
-        jButton1.setFont(new java.awt.Font("Times New Roman", 0, 16)); // NOI18N
-        jButton1.setText("Đăng nhập");
-
-        jButton2.setFont(new java.awt.Font("Times New Roman", 0, 16)); // NOI18N
-        jButton2.setText("Thoát");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jbtnDangNhap.setFont(new java.awt.Font("Times New Roman", 0, 16)); // NOI18N
+        jbtnDangNhap.setText("Đăng nhập");
+        jbtnDangNhap.setActionCommand("actionLogin");
+        jbtnDangNhap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                jbtnDangNhapActionPerformed(evt);
             }
         });
 
-        jPasswordField1.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jPasswordField1.setPreferredSize(new java.awt.Dimension(126, 30));
-        jPasswordField1.addActionListener(new java.awt.event.ActionListener() {
+        jbtnThoat.setFont(new java.awt.Font("Times New Roman", 0, 16)); // NOI18N
+        jbtnThoat.setText("Thoát");
+        jbtnThoat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jPasswordField1ActionPerformed(evt);
+                jbtnThoatActionPerformed(evt);
+            }
+        });
+
+        jtfPass.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jtfPass.setPreferredSize(new java.awt.Dimension(126, 30));
+        jtfPass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtfPassActionPerformed(evt);
             }
         });
 
@@ -69,12 +89,12 @@ public class Frame_Login extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Tên đăng nhập: ");
 
-        jTextField1.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jTextField1.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        jTextField1.setPreferredSize(new java.awt.Dimension(126, 30));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jtfTenDangNhap.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jtfTenDangNhap.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        jtfTenDangNhap.setPreferredSize(new java.awt.Dimension(126, 30));
+        jtfTenDangNhap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jtfTenDangNhapActionPerformed(evt);
             }
         });
 
@@ -93,7 +113,7 @@ public class Frame_Login extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(9, 9, 9)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jtfTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -101,11 +121,11 @@ public class Frame_Login extends javax.swing.JFrame {
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jbtnDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(9, 9, 9)))
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jtfPass, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jbtnThoat, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(88, Short.MAX_VALUE))
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -118,15 +138,15 @@ public class Frame_Login extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(4, 4, 4)
                         .addComponent(jLabel2))
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jtfTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtfPass, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jbtnThoat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jbtnDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -145,18 +165,24 @@ public class Frame_Login extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed
+    private void jtfPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfPassActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jPasswordField1ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_jtfPassActionPerformed
+
+    private void jtfTenDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfTenDangNhapActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_jtfTenDangNhapActionPerformed
+
+    private void jbtnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnThoatActionPerformed
         // TODO add your handling code here:
         System.exit(0);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_jbtnThoatActionPerformed
+
+    private void jbtnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnDangNhapActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbtnDangNhapActionPerformed
 
     /**
      * @param args the command line arguments
@@ -194,13 +220,42 @@ public class Frame_Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton jbtnDangNhap;
+    private javax.swing.JButton jbtnThoat;
+    private javax.swing.JPasswordField jtfPass;
+    private javax.swing.JTextField jtfTenDangNhap;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if ((e.getActionCommand()).equals("actionLogin")) {
+            try {
+                user = DBConnection.getUser(jtfTenDangNhap.getText(), String.valueOf(jtfPass.getPassword()));
+                System.out.println(user);
+
+                if (user != null) {
+                    int role = user.getRole();
+                    if (role == 1) {
+                        Frame_Admin frame_Admin = new Frame_Admin();
+                        frame_Admin.setVisible(true);
+                        this.setVisible(false);
+                    } else if (role == 2) {
+                        Frame_User frame_User = new Frame_User();
+                        frame_User.setVisible(true);
+                        this.setVisible(false);
+                    }
+                }
+            } catch (ClassNotFoundException ex) {
+                JOptionPane.showMessageDialog(rootPane, "Đã xảy ra lỗi! Vui lòng nhập lại");
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(rootPane, "Vui lòng kiểm tra lại tên tài khoản hoặc mật khẩu!");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(rootPane, "Vui lòng kiểm tra lại tên tài khoản hoặc mật khẩu!");
+            }
+        }
+    }
 }
