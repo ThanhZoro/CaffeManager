@@ -35,6 +35,9 @@ public class Frame_User extends javax.swing.JFrame {
     private java.util.Date toDay;
     private Timer timerNgayGio;
     public static int soBanActive;
+    PanelBanHang panelBanHang = new PanelBanHang();
+    PanelKho panelKho = new PanelKho();
+    PanelThongKe panelThongKe = new PanelThongKe();
 
     public Frame_User() {
         initComponents();
@@ -48,22 +51,34 @@ public class Frame_User extends javax.swing.JFrame {
     }
 
     private void KhoiTao() {
+        //Khởi tạo các Panel
+        this.getContentPane().add(panelBanHang);
+        this.getContentPane().add(panelKho);
+        this.getContentPane().add(panelThongKe);
+        panelBanHang.setBounds(0, 85, 1280, 630);
+        panelThongKe.setBounds(0, 85, 1280, 630);
+        panelKho.setBounds(0, 85, 1280, 630);
+        panelThongKe.setVisible(false);
+        panelKho.setVisible(false);
+        panelBanHang.setVisible(false);
+        
         //Tên đăng nhập
 //        jlbTenDangNhap.setText(user.getUserName());
+
         //Ngày giờ
         TimerTick();
+
         //Số bàn active
-        soBanActive = 0;
         try {
-            for (Ban ban : DBConnection.getBanActive()) {
-                soBanActive++;
-            }
+            soBanActive = DBConnection.getSoBanActive();
         } catch (SQLException ex) {
             Logger.getLogger(Frame_User.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(Frame_User.class.getName()).log(Level.SEVERE, null, ex);
         }
         jlbSoBanActive.setText("Đang phục vụ: " + String.valueOf(soBanActive) + " bàn");
+
+        
     }
 
     private void TimerTick() {
@@ -73,7 +88,6 @@ public class Frame_User extends javax.swing.JFrame {
                 toDay = new java.util.Date(System.currentTimeMillis());
                 sdfToDay = new SimpleDateFormat("dd/MM/yyyy   hh:mm:ss");
                 jlbNgayGio.setText(sdfToDay.format(toDay.getTime()));
-
             }
         });
         timerNgayGio.start();
@@ -238,24 +252,18 @@ public class Frame_User extends javax.swing.JFrame {
 
     private void jbtnBanHangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnBanHangActionPerformed
         // TODO add your handling code here:
-        PanelBanHang panelBanHang = new PanelBanHang();
-        panelBanHang.setBounds(0, 85, 1280, 630);
-        panelBanHang.setVisible(true);
-        this.getContentPane().add(panelBanHang);
+        panelThongKe.setVisible(false);
+        panelKho.setVisible(false);
 
-        panelBanHang.validate();
-        panelBanHang.repaint();
+        panelBanHang.setVisible(true);
     }//GEN-LAST:event_jbtnBanHangActionPerformed
 
     private void jbtnThongKeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnThongKeActionPerformed
         // TODO add your handling code here:
-        PanelThongKe panelThongKe = new PanelThongKe();
-        panelThongKe.setBounds(0, 85, 1280, 630);
-        panelThongKe.setVisible(true);
-        this.getContentPane().add(panelThongKe);
+        panelBanHang.setVisible(false);
+        panelKho.setVisible(false);
 
-        panelThongKe.validate();
-        panelThongKe.repaint();
+        panelThongKe.setVisible(true);
     }//GEN-LAST:event_jbtnThongKeActionPerformed
 
     private void jbtnDangXuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnDangXuatActionPerformed
@@ -267,13 +275,10 @@ public class Frame_User extends javax.swing.JFrame {
 
     private void jbtnKhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnKhoActionPerformed
         // TODO add your handling code here:
-        PanelKho panelKho = new PanelKho();
-        panelKho.setBounds(0, 85, 1280, 630);
-        panelKho.setVisible(true);
-        this.getContentPane().add(panelKho);
+        panelBanHang.setVisible(false);
+        panelThongKe.setVisible(false);
 
-        panelKho.validate();
-        panelKho.repaint();
+        panelKho.setVisible(true);
     }//GEN-LAST:event_jbtnKhoActionPerformed
 
     /**
@@ -319,7 +324,7 @@ public class Frame_User extends javax.swing.JFrame {
     private javax.swing.JButton jbtnThoat;
     private javax.swing.JButton jbtnThongKe;
     private javax.swing.JLabel jlbNgayGio;
-    private javax.swing.JLabel jlbSoBanActive;
+    public static javax.swing.JLabel jlbSoBanActive;
     private javax.swing.JLabel jlbTenDangNhap;
     // End of variables declaration//GEN-END:variables
 }
