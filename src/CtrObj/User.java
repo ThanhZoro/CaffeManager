@@ -10,10 +10,19 @@ package CtrObj;
  * @author Zoro
  */
 public class User {
+    private int idUser;
     private String userName;
     private String pass;
     private int role;
 
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
+    }
+    
     public String getUserName() {
         return userName;
     }
@@ -47,10 +56,19 @@ public class User {
         this.role = role;
     }
 
+    public User(int idUser, String userName, String pass, int role) {
+        this.idUser = idUser;
+        this.userName = userName;
+        this.pass = pass;
+        this.role = role;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "userName=" + userName + ", pass=" + pass + ", role=" + role + '}';
+        return "User{" + "idUser=" + idUser + ", userName=" + userName + ", pass=" + pass + ", role=" + role + '}';
     }
+    
+    
     
     
     

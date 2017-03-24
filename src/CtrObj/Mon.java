@@ -10,10 +10,19 @@ package CtrObj;
  * @author Zoro
  */
 public class Mon {
+    private int idMon;
     private String tenMon;
     private int giaTien;
     private String loai;
     private int soLuong;
+
+    public int getIdMon() {
+        return idMon;
+    }
+
+    public void setIdMon(int idMon) {
+        this.idMon = idMon;
+    }
 
     public String getTenMon() {
         return tenMon;
@@ -57,9 +66,17 @@ public class Mon {
         this.soLuong = 1;
     }
 
+    public Mon(int idMon, String tenMon, int giaTien, String loai) {
+        this.idMon = idMon;
+        this.tenMon = tenMon;
+        this.giaTien = giaTien;
+        this.loai = loai;
+        this.soLuong = 1;
+    }
+
     @Override
     public String toString() {
-        return "Mon{" + "tenMon=" + tenMon + ", giaTien=" + giaTien + ", loai=" + loai + ", soLuong=" + soLuong + '}';
+        return "Mon{" + "idMon=" + idMon + ", tenMon=" + tenMon + ", giaTien=" + giaTien + ", loai=" + loai + ", soLuong=" + soLuong + '}';
     }
 
     @Override

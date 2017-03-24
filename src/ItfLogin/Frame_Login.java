@@ -236,7 +236,6 @@ public class Frame_Login extends javax.swing.JFrame implements ActionListener {
         if ((e.getActionCommand()).equals("actionLogin")) {
             try {
                 user = DBConnection.getUser(jtfTenDangNhap.getText(), String.valueOf(jtfPass.getPassword()));
-                System.out.println(user);
 
                 if (user != null) {
                     int role = user.getRole();

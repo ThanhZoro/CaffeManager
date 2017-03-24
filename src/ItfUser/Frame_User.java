@@ -30,7 +30,7 @@ public class Frame_User extends javax.swing.JFrame {
     /**
      * Creates new form Frame_User
      */
-    private User user;
+    User user;
     private SimpleDateFormat sdfToDay;
     private java.util.Date toDay;
     private Timer timerNgayGio;
@@ -38,7 +38,8 @@ public class Frame_User extends javax.swing.JFrame {
     PanelBanHang panelBanHang = new PanelBanHang();
     PanelKho panelKho = new PanelKho();
     PanelThongKe panelThongKe = new PanelThongKe();
-
+    public static int idUser = 2;
+    
     public Frame_User() {
         initComponents();
         KhoiTao();
@@ -61,6 +62,7 @@ public class Frame_User extends javax.swing.JFrame {
         panelThongKe.setVisible(false);
         panelKho.setVisible(false);
         panelBanHang.setVisible(false);
+//        idUser = user.getIdUser();
         
         //Tên đăng nhập
 //        jlbTenDangNhap.setText(user.getUserName());
@@ -86,7 +88,7 @@ public class Frame_User extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 toDay = new java.util.Date(System.currentTimeMillis());
-                sdfToDay = new SimpleDateFormat("dd/MM/yyyy   hh:mm:ss");
+                sdfToDay = new SimpleDateFormat("dd/MM/yyyy   HH:mm:ss ");
                 jlbNgayGio.setText(sdfToDay.format(toDay.getTime()));
             }
         });
@@ -323,7 +325,7 @@ public class Frame_User extends javax.swing.JFrame {
     private javax.swing.JButton jbtnKho;
     private javax.swing.JButton jbtnThoat;
     private javax.swing.JButton jbtnThongKe;
-    private javax.swing.JLabel jlbNgayGio;
+    public static javax.swing.JLabel jlbNgayGio;
     public static javax.swing.JLabel jlbSoBanActive;
     private javax.swing.JLabel jlbTenDangNhap;
     // End of variables declaration//GEN-END:variables

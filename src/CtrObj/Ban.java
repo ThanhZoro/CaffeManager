@@ -10,10 +10,19 @@ package CtrObj;
  * @author Zoro
  */
 public class Ban {
+    private int idBan;
     private int maBan;
     private int khuVuc;
     private int trangThai;
 
+    public int getIdBan() {
+        return idBan;
+    }
+
+    public void setIdBan(int idBan) {
+        this.idBan = idBan;
+    }
+    
     public int getMaBan() {
         return maBan;
     }
@@ -47,6 +56,13 @@ public class Ban {
         this.trangThai = trangThai;
     }
 
+    public Ban(int idBan, int maBan, int khuVuc, int trangThai) {
+        this.idBan = idBan;
+        this.maBan = maBan;
+        this.khuVuc = khuVuc;
+        this.trangThai = trangThai;
+    }
+    
     @Override
     public String toString() {
         return "Ban{" + "maBan=" + maBan + ", khuVuc=" + khuVuc + ", trangThai=" + trangThai + '}';
