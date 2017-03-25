@@ -7,23 +7,16 @@ package ItfUser.PanelBanHang;
 
 import CtrDatabase.DBConnection;
 import static CtrDatabase.DBConnection.getMon;
-import CtrObj.Mon;
-import CtrObj.MonRenderer;
-import CtrObj.Order;
-import CtrObj.User;
+import CtrObj.*;
 import ItfUser.Frame_User;
 import static ItfUser.Frame_User.soBanActive;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.logging.*;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -37,21 +30,27 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
      */
     private String tenBan;
     private int maBan;
+
     private JButton jbtnBan;
     private JButton jbtnMon;
     private JButton jbtnNhomMon;
+
     private final String ACTIONBAN = "actionBan";
     private final String ACTION_NHOMMON = "actionNhomMon";
     private final String ACTION_MON = "actionMon";
     private final String ACTION_GIAMGIA = "actionGiamGia";
     private final String FONT_TNR = "Times New Roman";
+
     private final int DONGBAN = 0;
     private final int MOBAN = 1;
+
     private int coChuyenMoBan;
     private int tongTien;
-    private ArrayList<Mon> listMon = new ArrayList<>();
-    
 
+    private ArrayList<Mon> listMon = new ArrayList<>();
+    DefaultListModel<Mon> dtmMon;
+
+//**********************************************************************************************************************
     public PanelBanHang() {
         initComponents();
         //Cấu trúc panel 
@@ -60,14 +59,15 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
         //Khởi tạo panel Bàn
         KhoiTaoPanelBan();
         KhoiTaoPanelNhomMon();
-        
     }
-
+    
+//**********************************************************************************************************************
     private void KhoiTaoPanel() {
         //Set Layout lại cho Panel Chung
         this.setLayout(new BorderLayout());
         jpnlBan.setPreferredSize(new Dimension(385, 609));
         this.add(jpnlBan, BorderLayout.WEST);
+        
         //Tạo cái panel chứa 2 panel trong đó
         JPanel jpnl = new JPanel();
         jpnl.setLayout(new BorderLayout());
@@ -75,6 +75,7 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
         jpnlNhomMon.setPreferredSize(new Dimension(120, 609));
         jpnl.add(jpnlChiTietBan, BorderLayout.WEST);
         jpnl.add(jpnlNhomMon, BorderLayout.CENTER);
+        
         this.add(jpnl, BorderLayout.CENTER);
         jpnlMon.setPreferredSize(new Dimension(250, 609));
         this.add(jpnlMon, BorderLayout.EAST);
@@ -87,8 +88,8 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
         jpnlNhomMon.setVisible(false);
     }
 
+//**********************************************************************************************************************
     private void KhoiTaoPanelBan() {
-
         jpnlBan.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
 
         //Tạo bàn trong panel Bàn
@@ -104,6 +105,7 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                 jbtn.setFont(new Font(FONT_TNR, 1, 16));
                 jbtn.setActionCommand(ACTIONBAN + tenBan);
                 jbtn.addActionListener(this);
+                
                 if (DBConnection.checkActiveBan(i)) {
                     jbtn.setBackground(Color.RED);
                 } else {
@@ -113,14 +115,14 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                 jpnlBan.add(jbtn);
                 jpnlBan.setPreferredSize(new Dimension(385, 609));
             }
-
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         } catch (SQLException ex) {
-            Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
-
+    
+//**********************************************************************************************************************
     private void KhoiTaoPanelNhomMon() {
         jpnlNhomMon.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
@@ -139,14 +141,14 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                 jpnlNhomMon.add(jbtn);
                 jpnlNhomMon.setPreferredSize(new Dimension(120, 609));
             }
-
         } catch (SQLException ex) {
-            Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         } catch (Exception ex) {
-            Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
-
+    
+//**********************************************************************************************************************
     private void KhoiTaoPanelMon(ArrayList<Mon> LIST_MON) {
         jpnlMon.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
 
@@ -159,22 +161,23 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                 jbtn.setBorder(new TitledBorder(new EmptyBorder(1, 1, 1, 1), "Giá tiền: " + ThemDauPhanCach_Tien(String.valueOf(mon.getGiaTien())) + " VNĐ", TitledBorder.CENTER, TitledBorder.ABOVE_BOTTOM, new Font(FONT_TNR, 0, 15)));
                 jbtn.setPreferredSize(new Dimension(200, 60));
                 jbtn.setFont(new Font(FONT_TNR, 1, 16));
+                
                 jbtn.setActionCommand(ACTION_MON + mon.getTenMon());
                 jbtn.addActionListener(this);
 
                 jpnlMon.add(jbtn);
                 jpnlMon.setPreferredSize(new Dimension(250, 609));
             }
-
         } catch (Exception ex) {
-            Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
-
+    
+//**********************************************************************************************************************
     private void KhoiTaoListMon() {
         //Tạo giao diện cho JList Món
-        DefaultListModel<Mon> dtmMon = new DefaultListModel<>();
-        
+        dtmMon = new DefaultListModel<>();
+
         for (Mon mon : listMon) {
             dtmMon.addElement(mon);
         }
@@ -182,40 +185,35 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
         jListMon.setCellRenderer(new MonRenderer());
     }
     
-    private void ThemTienVaoLabel()
-    {
+//**********************************************************************************************************************
+    private void ThemTienVaoLabel() {
         //Thêm tiền vào các label 
         try {
             jlbTongTien.setText(ThemDauPhanCach_Tien(String.valueOf(tongTien)));
             String giamGia = jtfGiamGia.getText();
-            int tienGiamGia = Integer.parseInt(giamGia);
-            if(tongTien == 0)
-            {
+            int tienGiamGia = Integer.parseInt(giamGia.trim());
+            
+            if (tongTien == 0) {
                 jlbTongTien.setText("0");
                 jlbThanhToan.setText("0");
-            }
-            else if(tienGiamGia >= 1000)
-            {
+                
+            } else if (tienGiamGia >= 1000) {
                 int thanhToan = tongTien - tienGiamGia;
                 jlbDonVi.setText("VNĐ");
                 jlbThanhToan.setText(ThemDauPhanCach_Tien(String.valueOf(thanhToan)));
-            }
-            else if(tienGiamGia > 0 && tienGiamGia <= 100)
-            {
-                int thanhToan = tongTien - ((tongTien*tienGiamGia)/100);
+                
+            } else if (tienGiamGia > 0 && tienGiamGia <= 100) {
+                int thanhToan = tongTien - ((tongTien * tienGiamGia) / 100);
                 jlbDonVi.setText("%");
                 jlbThanhToan.setText(ThemDauPhanCach_Tien(String.valueOf(thanhToan)));
-            }
-            else if(tienGiamGia == 0)
-            {
+                
+            } else if (tienGiamGia == 0) {
                 int thanhToan = tongTien;
                 jlbThanhToan.setText(ThemDauPhanCach_Tien(String.valueOf(thanhToan)));
-            }
-            else
-            {
+                
+            } else {
                 throw new Exception();
             }
-            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Nhập sai dữ liệu. Vui lòng nhập lại!");
             jtfGiamGia.setText("0");
@@ -223,34 +221,31 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
         }
     }
     
-    public static String ThemDauPhanCach_Tien(String tienMau)
-    {
+//**********************************************************************************************************************
+    public static String ThemDauPhanCach_Tien(String tienMau) {
         StringBuffer strKetQua = new StringBuffer();
         int intTienMau = Integer.parseInt(tienMau);
-        int demChuSo = (int) Math.log10((double)intTienMau) + 1;
-        
+        int demChuSo = (int) Math.log10((double) intTienMau) + 1;
+
         //vd 99,999,999
-        if(demChuSo >= 7)
-        {
-            int soDu = demChuSo%3;
+        if (demChuSo >= 7) {
+            int soDu = demChuSo % 3;
             strKetQua.append(tienMau.substring(0, soDu)).append(",");
-            strKetQua.append(tienMau.substring(soDu, soDu+3)).append(",");
-            strKetQua.append(tienMau.substring(soDu+3));
-        }
-        else if(demChuSo == 6)
-        {
+            strKetQua.append(tienMau.substring(soDu, soDu + 3)).append(",");
+            strKetQua.append(tienMau.substring(soDu + 3));
+        } else if (demChuSo == 6) { //999,999
             strKetQua.append(tienMau.substring(0, 3)).append(",");
             strKetQua.append(tienMau.substring(3));
-        }
-        else if(demChuSo >= 4) //99,999
+        } else if (demChuSo >= 4) //99,999
         {
-            int soDu = demChuSo%3;
+            int soDu = demChuSo % 3;
             strKetQua.append(tienMau.substring(0, soDu)).append(",");
             strKetQua.append(tienMau.substring(soDu));
         }
         return String.valueOf(strKetQua);
     }
-
+    
+//**********************************************************************************************************************
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -297,7 +292,7 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
             .addGap(0, 581, Short.MAX_VALUE)
         );
 
-        jpnlChiTietBan.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 3, true), "Bàn", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Times New Roman", 1, 16))); // NOI18N
+        jpnlChiTietBan.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 3, true), "Chi Tiết", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Times New Roman", 1, 16))); // NOI18N
         jpnlChiTietBan.setPreferredSize(new java.awt.Dimension(461, 609));
 
         jlbTenBan.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
@@ -342,6 +337,16 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
         jListMon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jListMonMouseClicked(evt);
+            }
+        });
+        jListMon.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jListMonKeyPressed(evt);
+            }
+        });
+        jListMon.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jListMonValueChanged(evt);
             }
         });
         jScrollPane2.setViewportView(jListMon);
@@ -443,7 +448,7 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jpnlNhomMon.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 3, true), "Bàn", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Times New Roman", 1, 16))); // NOI18N
+        jpnlNhomMon.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 3, true), "Danh Mục", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Times New Roman", 1, 16))); // NOI18N
         jpnlNhomMon.setPreferredSize(new java.awt.Dimension(120, 609));
 
         javax.swing.GroupLayout jpnlNhomMonLayout = new javax.swing.GroupLayout(jpnlNhomMon);
@@ -457,7 +462,7 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
             .addGap(0, 581, Short.MAX_VALUE)
         );
 
-        jpnlMon.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 3, true), "Bàn", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Times New Roman", 1, 16))); // NOI18N
+        jpnlMon.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 3, true), "Món", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Times New Roman", 1, 16))); // NOI18N
         jpnlMon.setPreferredSize(new java.awt.Dimension(250, 609));
 
         javax.swing.GroupLayout jpnlMonLayout = new javax.swing.GroupLayout(jpnlMon);
@@ -517,32 +522,32 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
 
                 //Xét màu lại cho button bàn => đổi thành màu thường là chưa mở
                 jbtnBan.setBackground(new Color(255, 255, 255));
-                
+
                 //Xét lại order
                 String thoiGianVao = DBConnection.getThoiGianVao_Ban(maBan);
                 for (Mon mon : listMon) {
-                    DBConnection.setUpdateMon_Orders(mon, Frame_User.idUser, maBan, thoiGianVao, true);
+                    DBConnection.setUpdateThanhToan_Order(mon, Frame_User.idUser, maBan, thoiGianVao, true);
                 }
                 DBConnection.setThoiGianVao_Ban(maBan, null);
-                
+
                 //Xóa list danh sách các món
                 listMon = new ArrayList<>();
                 KhoiTaoListMon();
-                
+
                 //Xóa các label tiền
                 jlbTongTien.setText("0");
                 jlbThanhToan.setText("0");
                 jlbDonVi.setText("");
                 jtfGiamGia.setText("0");
             }
-
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         } catch (SQLException ex) {
-            Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }//GEN-LAST:event_jbtnThanhToanActionPerformed
 
+//**********************************************************************************************************************
     private void jbtnMoBanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnMoBanActionPerformed
         // TODO add your handling code here:
         if (coChuyenMoBan == MOBAN) {
@@ -561,18 +566,16 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
 
                     //Xét màu lại cho button bàn => đổi thành màu đỏ là đang phục vụ
                     jbtnBan.setBackground(Color.RED);
-                    
+
                     //Cài đặt thời gian tạm vào bảng bàn
                     String tenBan = jbtnBan.getText();
                     tenBan = tenBan.substring(4);
                     int maBan = Integer.parseInt(tenBan);
                     boolean setThoiGianVao_Ban = DBConnection.setThoiGianVao_Ban(maBan, Frame_User.jlbNgayGio.getText());
-                    if(!setThoiGianVao_Ban)
-                    {
+                    if (!setThoiGianVao_Ban) {
                         throw new Exception("Bị lỗi nhập liệu thời gian. Xin vui lòng kiểm tra lại!");
                     }
                 }
-
             } catch (ClassNotFoundException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage());
             } catch (SQLException ex) {
@@ -597,18 +600,16 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
 
                     //Xét màu lại cho button bàn => đổi thành màu thường là chưa mở
                     jbtnBan.setBackground(new Color(255, 255, 255));
-                    
+
                     //Cài đặt thời gian tạm vào bảng bàn
                     String tenBan = jbtnBan.getText();
                     tenBan = tenBan.substring(4);
                     int maBan = Integer.parseInt(tenBan);
                     boolean setThoiGianVao_Ban = DBConnection.setThoiGianVao_Ban(maBan, null);
-                    if(!setThoiGianVao_Ban)
-                    {
+                    if (!setThoiGianVao_Ban) {
                         throw new Exception("Bị lỗi nhập liệu thời gian. Xin vui lòng kiểm tra lại!");
                     }
                 }
-
             } catch (ClassNotFoundException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage());
             } catch (SQLException ex) {
@@ -619,15 +620,171 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
         }
     }//GEN-LAST:event_jbtnMoBanActionPerformed
 
+//**********************************************************************************************************************
+    private void XoaMon(Mon monTemp) {
+        //Tạo một JOptionPane để chọn số lượng cần xóa
+        Object[] mangSo = new Object[monTemp.getSoLuong() + 1];
+        int i = 0;
+        while (i <= monTemp.getSoLuong()) {
+            mangSo[i] = i;
+            i++;
+        }
+
+        Object showInputDialog = JOptionPane.showInputDialog(jListMon, "Hãy nhập số lượng cần XÓA: ", "Xóa món " + monTemp.getTenMon(), JOptionPane.INFORMATION_MESSAGE, null, mangSo, "1");
+        if (showInputDialog != null) {
+            //----------------------------------------------------------------------------------------------
+            if ((int) showInputDialog >= 1 && (int) showInputDialog <= (monTemp.getSoLuong() - 1)) {
+                listMon.remove(monTemp);
+                try {
+                    monTemp.setSoLuong((monTemp.getSoLuong()) - (int) showInputDialog);
+                    DBConnection.setUpdateQuantity_Order(monTemp, Frame_User.idUser, maBan);
+                } catch (ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                }
+                listMon.add(monTemp);
+                KhoiTaoListMon();
+            //----------------------------------------------------------------------------------------------
+            } else if ((int) showInputDialog == monTemp.getSoLuong()) {
+                try {
+                    Order rowOrder = DBConnection.getRowOrder(monTemp, Frame_User.idUser, maBan);
+                    int countRowOrder = DBConnection.getCountRowOrder();
+                    DBConnection.setDeleteMon_Orders(monTemp, Frame_User.idUser, maBan);
+                    boolean setUpdateID_Order = DBConnection.setUpdateID_Order(rowOrder.getIdOrder(), countRowOrder);
+                    if (!setUpdateID_Order) {
+                        throw new Exception("Đã xảy ra lỗi!");
+                    }
+                } catch (ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                }
+                listMon.remove(monTemp);
+                KhoiTaoListMon();
+            }
+            tongTien -= (monTemp.getGiaTien()) * ((int) showInputDialog);
+            ThemTienVaoLabel();
+        }
+    }
+    
+//**********************************************************************************************************************
+    private void ThemMon(Mon monTemp) {
+        //Tạo một JOptionPane để chọn số lượng cần xóa
+        Object[] mangSo = new Object[monTemp.getSoLuong() + 30];
+        int i = 0;
+        while (i <= monTemp.getSoLuong() + 29) {
+            if (i == monTemp.getSoLuong() + 29) {
+                mangSo[i] = "...";
+                break;
+            }
+            mangSo[i] = String.valueOf(i);
+            i++;
+        }
+
+        Object showInputDialog = JOptionPane.showInputDialog(jListMon, "Hãy nhập số lượng cần THÊM: ", "Thêm món " + monTemp.getTenMon(), JOptionPane.INFORMATION_MESSAGE, null, mangSo, "1");
+        if (showInputDialog != null) {
+            String strInput = (String) showInputDialog;
+            //----------------------------------------------------------------------------------------------
+            if (strInput.equals("...")) {
+                String soLuongCanThem = JOptionPane.showInputDialog(jListMon, "Hãy nhập số lượng cần THÊM: ", "Thêm món " + monTemp.getTenMon(), JOptionPane.INFORMATION_MESSAGE);
+                listMon.remove(monTemp);
+                try {
+                    int intSoLuongCanThem = Integer.parseInt(soLuongCanThem);
+                    monTemp.setSoLuong((monTemp.getSoLuong()) + intSoLuongCanThem);
+                    DBConnection.setUpdateQuantity_Order(monTemp, Frame_User.idUser, maBan);
+
+                    tongTien += (monTemp.getGiaTien()) * (intSoLuongCanThem);
+                    ThemTienVaoLabel();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this, e.getMessage());
+                }
+                listMon.add(monTemp);
+                KhoiTaoListMon();
+            //----------------------------------------------------------------------------------------------
+            } else {
+                int intInput = 0;
+                try {
+                    intInput = Integer.parseInt(strInput);
+                    if (intInput < 0) {
+                        throw new Exception("Đã xảy ra lỗi!");
+                    }
+                    listMon.remove(monTemp);
+                    if (intInput >= 1 && intInput < monTemp.getSoLuong() + 30) {
+                        monTemp.setSoLuong(monTemp.getSoLuong() + intInput);
+                        DBConnection.setUpdateQuantity_Order(monTemp, Frame_User.idUser, maBan);
+                    }
+                } catch (ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                }
+                listMon.add(monTemp);
+                KhoiTaoListMon();
+
+                tongTien += (monTemp.getGiaTien()) * (intInput);
+                ThemTienVaoLabel();
+            }
+        }
+    }
+    
+//**********************************************************************************************************************
     private void jListMonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jListMonMouseClicked
         // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            DefaultListModel<Mon> dtmJlistget_Mon = (DefaultListModel<Mon>) jListMon.getModel();
+            if (!dtmJlistget_Mon.isEmpty() && (jListMon.getSelectedIndex()) >= 0) {
+                Mon monTemp = dtmMon.getElementAt(jListMon.getSelectedIndex());
+
+                //LỰA CHỌN XÓA HAY THÊM
+                Object[] options = {"Xóa", "Thêm", "Hủy"};
+                int luaChon = JOptionPane.showOptionDialog(jListMon, "Bạn muốn làm gì?", "Chỉnh sửa " + monTemp.getTenMon(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+                if (luaChon == 0) {
+                    XoaMon(monTemp);
+                } else if (luaChon == 1) {
+                    ThemMon(monTemp);
+                }
+            }
+        }
     }//GEN-LAST:event_jListMonMouseClicked
 
+//**********************************************************************************************************************
     private void jtfGiamGiaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtfGiamGiaFocusLost
         // TODO add your handling code here:
         ThemTienVaoLabel();
     }//GEN-LAST:event_jtfGiamGiaFocusLost
 
+//**********************************************************************************************************************
+    private void jListMonValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListMonValueChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jListMonValueChanged
+
+//**********************************************************************************************************************
+    private void jListMonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jListMonKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            DefaultListModel<Mon> dtmJlistget_Mon = (DefaultListModel<Mon>) jListMon.getModel();
+            if (!dtmJlistget_Mon.isEmpty() && (jListMon.getSelectedIndex()) >= 0) {
+                Mon monTemp = dtmMon.getElementAt(jListMon.getSelectedIndex());
+
+                //LỰA CHỌN XÓA HAY THÊM
+                Object[] options = {"Xóa", "Thêm", "Hủy"};
+                int luaChon = JOptionPane.showOptionDialog(jListMon, "Bạn muốn làm gì?", "Chỉnh sửa " + monTemp.getTenMon(), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+                if (luaChon == 0) {
+                    XoaMon(monTemp);
+                } else if (luaChon == 1) {
+                    ThemMon(monTemp);
+                }
+            }
+        }
+    }//GEN-LAST:event_jListMonKeyPressed
+//**********************************************************************************************************************
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel2;
@@ -650,6 +807,7 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
     private javax.swing.JTextField jtfGiamGia;
     // End of variables declaration//GEN-END:variables
 
+//**********************************************************************************************************************
     @Override
     public void actionPerformed(ActionEvent e) {
         String actionCommand = e.getActionCommand();
@@ -686,21 +844,21 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                     jlbTrangThai.setText("Đang phục vụ...");
                     jbtnThanhToan.setEnabled(true);
                     jtfGiamGia.setEnabled(true);
-                    
+
                     listMon = new ArrayList<>();
                     tongTien = 0;
-                    
+
                     Map<Integer, Mon> mapSTT_Mon = DBConnection.getMapSTT_Mon(Frame_User.idUser, maBan);
                     Set<Integer> keySet = mapSTT_Mon.keySet();
                     for (Integer key : keySet) {
                         Mon mon = mapSTT_Mon.get(key);
-                        tongTien += (mon.getGiaTien()*mon.getSoLuong());
+                        tongTien += (mon.getGiaTien() * mon.getSoLuong());
                         listMon.add(mon);
                     }
-                    
+
                     KhoiTaoListMon();
                     ThemTienVaoLabel();
-                    
+
                 } else { //Không được phục vụ
                     jbtnMoBan.setEnabled(true);
                     coChuyenMoBan = MOBAN;
@@ -710,7 +868,7 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                     jlbTrangThai.setText("Chưa mở!");
                     jbtnThanhToan.setEnabled(false);
                     jtfGiamGia.setEnabled(false);
-                    
+
                     listMon = new ArrayList<>();
                     KhoiTaoListMon();
                     tongTien = 0;
@@ -718,18 +876,18 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                 }
                 return;
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage());
             } catch (SQLException ex) {
-                Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage());
             } catch (Exception ex) {
-                Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage());
             }
-            //----------------------------------------------------------------------------------------------
-            //Tạo action của các Button Nhóm Món
+        //----------------------------------------------------------------------------------------------
+        //Tạo action của các Button Nhóm Món
         } else if (actionCommand.contains(ACTION_NHOMMON)) {
             jpnlMon.setVisible(false);
             jpnlMon.removeAll();
-            
+
             if (e.getSource() instanceof JButton) {
                 jbtnNhomMon = (JButton) e.getSource();
             }
@@ -741,13 +899,13 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
 
                 KhoiTaoPanelMon(listMonTemp);
 
-            } catch (SQLException ex) { 
-                Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
             } catch (Exception ex) {
-                Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage());
             }
-            //----------------------------------------------------------------------------------------------
-            //Tạo action của các Button Món 
+        //----------------------------------------------------------------------------------------------
+        //Tạo action của các Button Món 
         } else if (actionCommand.contains(ACTION_MON)) {
             jbtnMoBan.setText("Mở bàn");
             jbtnMoBan.setEnabled(false);
@@ -756,15 +914,14 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
             if (e.getSource() instanceof JButton) {
                 jbtnMon = (JButton) e.getSource();
             }
-            
+
             try {
                 Mon mon = DBConnection.getMon(jbtnMon.getText(), jbtnNhomMon.getText());
-                Order rowOrder = DBConnection.getRowOrder(mon, Frame_User.idUser, maBan);
-                
+
                 if (!listMon.isEmpty()) {
                     boolean equals = false;
                     int soLuong = 1;
-                    
+
                     for (Mon monTemp : listMon) {
                         equals = mon.equals(monTemp);
                         if (equals) {
@@ -777,31 +934,28 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                         listMon.remove(mon);
                         mon.setSoLuong(++soLuong);
                         listMon.add(mon);
-                        DBConnection.setUpdateMon_Orders(mon, rowOrder.getIdOrder());
+                        DBConnection.setUpdateQuantity_Order(mon, Frame_User.idUser, maBan);
                     } else {
                         listMon.add(mon);
                         DBConnection.setMon_Orders(mon, Frame_User.idUser, maBan);
                     }
-                    
+
                 } else {
                     listMon.add(mon);
                     DBConnection.setMon_Orders(mon, Frame_User.idUser, maBan);
                 }
-                
+
                 tongTien += mon.getGiaTien();
                 KhoiTaoListMon();
                 ThemTienVaoLabel();
             } catch (SQLException ex) {
-                Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage());
             } catch (Exception ex) {
-                Logger.getLogger(PanelBanHang.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage());
             }
+        //----------------------------------------------------------------------------------------------    
+        } else if (actionCommand.contains(ACTION_GIAMGIA)) {
+            ThemTienVaoLabel();
         }
-        else if(actionCommand.contains(ACTION_GIAMGIA))
-        {
-                ThemTienVaoLabel();
-        }
-
     }
-
 }
