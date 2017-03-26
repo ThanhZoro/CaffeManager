@@ -5,24 +5,13 @@
  */
 package CtrDatabase;
 
-import CtrObj.Ban;
-import CtrObj.Mon;
-import CtrObj.Order;
-import CtrObj.User;
+import CtrObj.*;
 import java.io.UnsupportedEncodingException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.logging.*;
 
 /**
  *
@@ -34,6 +23,9 @@ public class DBConnection {
     public static String url = "jdbc:mysql://localhost:3306/coffee_management";
     public static String user = "root";
     public static String pass = "";
+    
+    private static SimpleDateFormat sdfNgayThang = new SimpleDateFormat("dd/MM/yyyy");
+    private static SimpleDateFormat sdfThoiGian = new SimpleDateFormat("HH:mm:ss");
     
 //**********************************************************************************************************************
     //Mở kết nối
@@ -293,17 +285,35 @@ public class DBConnection {
     
 //**********************************************************************************************************************
     //Ghi thời gian tạm vào Bảng Bàn
-    public static boolean setThoiGianVao_Ban(int IDBAN, String THOIGIANVAO) throws ClassNotFoundException, SQLException
+    public static boolean setThoiGianVao_Ban(int IDBAN, String NGAYTHANG, String THOIGIAN) throws ClassNotFoundException, SQLException, ParseException
     {
         Connection cnn = null;
         PreparedStatement ps = null;
         cnn = OpenDB();
 
         if (cnn != null) {
-            String sql = "UPDATE `tables` SET `ThoiGianVao` = ? WHERE `IDtable` = ?";
+            String sql = "UPDATE `tables` SET `NgayThang` = ?, `ThoiGian` = ? WHERE `IDtable` = ?";
             ps = cnn.prepareStatement(sql);
-            ps.setString(1, THOIGIANVAO);
-            ps.setInt(2, IDBAN);
+
+            if (NGAYTHANG != null){
+                java.util.Date ngayThang = sdfNgayThang.parse(NGAYTHANG);
+                java.sql.Date ngayThangSql = new java.sql.Date(ngayThang.getTime());
+                ps.setDate(1, ngayThangSql);
+            }
+            else {
+                ps.setDate(1, null);
+            }
+            
+            if (THOIGIAN != null){
+                java.util.Date thoiGian = sdfThoiGian.parse(THOIGIAN);
+                java.sql.Time thoiGianSql = new java.sql.Time(thoiGian.getTime());
+                ps.setTime(2, thoiGianSql);
+            }
+            else {
+                ps.setTime(2, null);
+            }
+            
+            ps.setInt(3, IDBAN);
             int rowEff = ps.executeUpdate();
             if (rowEff > 0) {
                 Close(null, ps, cnn);
@@ -314,8 +324,8 @@ public class DBConnection {
     }
     
 //**********************************************************************************************************************
-    //Ghi thời gian tạm vào Bảng Bàn
-    public static String getThoiGianVao_Ban(int IDBAN) throws ClassNotFoundException, SQLException
+    //Lấy thời gian từ Bảng Bàn
+    public static String getThoiGianVao_Ban(int IDBAN) throws ClassNotFoundException, SQLException, ParseException
     {
         Connection cnn = null;
         PreparedStatement ps = null;
@@ -323,14 +333,21 @@ public class DBConnection {
         cnn = OpenDB();
 
         if (cnn != null) {
-            String sql = "SELECT `ThoiGianVao` FROM `tables` WHERE `IDtable` = ? AND `Trangthai` = 0";
+            String sql = "SELECT `NgayThang`, `ThoiGian` FROM `tables` WHERE `IDtable` = ? AND `Trangthai` = 0";
             ps = cnn.prepareStatement(sql);
             ps.setInt(1, IDBAN);
             rs = ps.executeQuery();
             if(rs.next())
             {
-                String thoiGianVao = rs.getString("ThoiGianVao");
-                return thoiGianVao;
+                StringBuffer strKetQua = new StringBuffer();
+                
+                java.sql.Date ngayThangSql = rs.getDate("NgayThang");
+                strKetQua.append(sdfNgayThang.format(ngayThangSql));
+                
+                java.sql.Time thoiGianSql = rs.getTime("ThoiGian");
+                strKetQua.append(sdfThoiGian.format(thoiGianSql));
+                
+                return strKetQua.toString();
             }
         }
         return null;
@@ -345,7 +362,7 @@ public class DBConnection {
         cnn = OpenDB();
 
         if (cnn != null) {
-            String sql = "INSERT INTO `orders`(`IDorder`, `IDuser`, `IDban`, `IDmonan`, `Quantity`, `ThanhToan`, `ThoiGianVao`) VALUES (?,?,?,?,?,?,null)";
+            String sql = "INSERT INTO `orders`(`IDorder`, `IDuser`, `IDban`, `IDmonan`, `Quantity`, `ThanhToan`, `NgayThang`, `ThoiGian`) VALUES (?,?,?,?,?,?,null,null)";
             ps = cnn.prepareStatement(sql);
             int countRowOrder = getCountRowOrder();
             ps.setInt(1, ++countRowOrder);
@@ -390,20 +407,39 @@ public class DBConnection {
     
 //**********************************************************************************************************************
     //Sửa lại dòng orders khi thanh toán rồi
-    public static boolean setUpdateThanhToan_Order(Mon mon, int IDUSER, int IDBAN, String THOIGIANVAO, boolean THANHTOAN) throws ClassNotFoundException, SQLException
+    public static boolean setUpdateThanhToan_Order(Mon mon, int IDUSER, int IDBAN, String NGAYTHANG, String THOIGIAN, int GIAMGIA, boolean THANHTOAN) throws ClassNotFoundException, SQLException, ParseException
     {
         Connection cnn = null;
         PreparedStatement ps = null;
         cnn = OpenDB();
 
         if (cnn != null) {
-            String sql = "UPDATE `orders` SET `ThanhToan`= ? ,`ThoiGianVao`= ? WHERE `IDuser` = ? AND `IDban` = ? AND `IDmonan`= ? AND `ThanhToan`= false";
+            String sql = "UPDATE `orders` SET `ThanhToan`= ?, `NgayThang` = ?, `ThoiGian`= ?, `GiamGia` = ? WHERE `IDuser` = ? AND `IDban` = ? AND `IDmonan`= ? AND `ThanhToan`= false";
             ps = cnn.prepareStatement(sql);
             ps.setBoolean(1, THANHTOAN);
-            ps.setString(2, THOIGIANVAO);
-            ps.setInt(3, IDUSER);
-            ps.setInt(4, IDBAN);
-            ps.setInt(5, mon.getIdMon());
+            
+            if (NGAYTHANG != null){
+                java.util.Date ngayThang = sdfNgayThang.parse(NGAYTHANG);
+                java.sql.Date ngayThangSql = new java.sql.Date(ngayThang.getTime());
+                ps.setDate(2, ngayThangSql);
+            }
+            else {
+                ps.setDate(2, null);
+            }
+            
+            if (THOIGIAN != null){
+                java.util.Date thoiGian = sdfThoiGian.parse(THOIGIAN);
+                java.sql.Time thoiGianSql = new java.sql.Time(thoiGian.getTime());
+                ps.setTime(3, thoiGianSql);
+            }
+            else {
+                ps.setTime(3, null);
+            }
+            
+            ps.setInt(4, GIAMGIA);
+            ps.setInt(5, IDUSER);
+            ps.setInt(6, IDBAN);
+            ps.setInt(7, mon.getIdMon());
             
             int rowEff = ps.executeUpdate();
             if (rowEff > 0) {

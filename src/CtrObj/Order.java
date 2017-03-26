@@ -5,6 +5,8 @@
  */
 package CtrObj;
 
+import java.util.Date;
+
 /**
  *
  * @author Zoro
@@ -16,7 +18,7 @@ public class Order {
     private int idMon;
     private int soLuong;
     private boolean thanhToan;
-    private String thoiGianVao;
+    private java.util.Date thoiGianVao;
 
     public int getIdOrder() {
         return idOrder;
@@ -66,14 +68,15 @@ public class Order {
         this.thanhToan = thanhToan;
     }
 
-    public String getThoiGianVao() {
+    public Date getThoiGianVao() {
         return thoiGianVao;
     }
 
-    public void setThoiGianVao(String thoiGianVao) {
+    public void setThoiGianVao(Date thoiGianVao) {
         this.thoiGianVao = thoiGianVao;
     }
 
+    
     public Order() {
     }
     
@@ -93,8 +96,8 @@ public class Order {
         this.thanhToan = thanhToan;
         this.thoiGianVao = null;
     }
-    
-    public Order(int idOrder, int idUser, int idBan, int idMon, int soLuong, boolean thanhToan, String thoiGianVao) {
+
+    public Order(int idOrder, int idUser, int idBan, int idMon, int soLuong, boolean thanhToan, Date thoiGianVao) {
         this.idOrder = idOrder;
         this.idUser = idUser;
         this.idBan = idBan;

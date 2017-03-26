@@ -18,6 +18,8 @@ public class PanelThongKe extends javax.swing.JPanel {
      */
     public PanelThongKe() {
         initComponents();
+         
+        
     }
 
     /**
@@ -64,6 +66,7 @@ public class PanelThongKe extends javax.swing.JPanel {
                 return types [columnIndex];
             }
         });
+        jTable1.setFocusable(false);
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setPreferredWidth(1);

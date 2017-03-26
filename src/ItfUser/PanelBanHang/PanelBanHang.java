@@ -13,6 +13,7 @@ import static ItfUser.Frame_User.soBanActive;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
+import java.text.*;
 import java.util.*;
 import java.util.logging.*;
 import javax.swing.*;
@@ -49,6 +50,9 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
 
     private ArrayList<Mon> listMon = new ArrayList<>();
     DefaultListModel<Mon> dtmMon;
+    
+    SimpleDateFormat sdfNgayThang = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat sdfThoiGian = new SimpleDateFormat("HH:mm:ss");
 
 //**********************************************************************************************************************
     public PanelBanHang() {
@@ -197,7 +201,7 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                 jlbTongTien.setText("0");
                 jlbThanhToan.setText("0");
                 
-            } else if (tienGiamGia >= 1000) {
+            } else if (tienGiamGia >= 1000 && tienGiamGia <= tongTien) {
                 int thanhToan = tongTien - tienGiamGia;
                 jlbDonVi.setText("VNĐ");
                 jlbThanhToan.setText(ThemDauPhanCach_Tien(String.valueOf(thanhToan)));
@@ -210,7 +214,6 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
             } else if (tienGiamGia == 0) {
                 int thanhToan = tongTien;
                 jlbThanhToan.setText(ThemDauPhanCach_Tien(String.valueOf(thanhToan)));
-                
             } else {
                 throw new Exception();
             }
@@ -524,11 +527,14 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                 jbtnBan.setBackground(new Color(255, 255, 255));
 
                 //Xét lại order
-                String thoiGianVao = DBConnection.getThoiGianVao_Ban(maBan);
+                String thoiGianVao_Ban = DBConnection.getThoiGianVao_Ban(maBan);
+                String strGiamGia = jtfGiamGia.getText();
+                int intGiamGia = Integer.parseInt(strGiamGia);
+                
                 for (Mon mon : listMon) {
-                    DBConnection.setUpdateThanhToan_Order(mon, Frame_User.idUser, maBan, thoiGianVao, true);
+                    DBConnection.setUpdateThanhToan_Order(mon, Frame_User.idUser, maBan, thoiGianVao_Ban.substring(0, 10), thoiGianVao_Ban.substring(10), intGiamGia, true);
                 }
-                DBConnection.setThoiGianVao_Ban(maBan, null);
+                DBConnection.setThoiGianVao_Ban(maBan, null, null);
 
                 //Xóa list danh sách các món
                 listMon = new ArrayList<>();
@@ -543,6 +549,8 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        } catch (ParseException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }//GEN-LAST:event_jbtnThanhToanActionPerformed
@@ -571,7 +579,11 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                     String tenBan = jbtnBan.getText();
                     tenBan = tenBan.substring(4);
                     int maBan = Integer.parseInt(tenBan);
-                    boolean setThoiGianVao_Ban = DBConnection.setThoiGianVao_Ban(maBan, Frame_User.jlbNgayGio.getText());
+                    
+                    java.util.Date ngayGio = new java.util.Date(System.currentTimeMillis());
+                    String ngayThang = sdfNgayThang.format(ngayGio.getTime());
+                    String thoiGian = sdfThoiGian.format(ngayGio.getTime());
+                    boolean setThoiGianVao_Ban = DBConnection.setThoiGianVao_Ban(maBan, ngayThang, thoiGian);
                     if (!setThoiGianVao_Ban) {
                         throw new Exception("Bị lỗi nhập liệu thời gian. Xin vui lòng kiểm tra lại!");
                     }
@@ -602,10 +614,7 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
                     jbtnBan.setBackground(new Color(255, 255, 255));
 
                     //Cài đặt thời gian tạm vào bảng bàn
-                    String tenBan = jbtnBan.getText();
-                    tenBan = tenBan.substring(4);
-                    int maBan = Integer.parseInt(tenBan);
-                    boolean setThoiGianVao_Ban = DBConnection.setThoiGianVao_Ban(maBan, null);
+                    boolean setThoiGianVao_Ban = DBConnection.setThoiGianVao_Ban(maBan, null, null);
                     if (!setThoiGianVao_Ban) {
                         throw new Exception("Bị lỗi nhập liệu thời gian. Xin vui lòng kiểm tra lại!");
                     }
@@ -630,7 +639,7 @@ public class PanelBanHang extends javax.swing.JPanel implements ActionListener {
             i++;
         }
 
-        Object showInputDialog = JOptionPane.showInputDialog(jListMon, "Hãy nhập số lượng cần XÓA: ", "Xóa món " + monTemp.getTenMon(), JOptionPane.INFORMATION_MESSAGE, null, mangSo, "1");
+        Object showInputDialog = JOptionPane.showInputDialog(jListMon, "Hãy nhập số lượng cần XÓA: ", "Xóa món " + monTemp.getTenMon(), JOptionPane.INFORMATION_MESSAGE, null, mangSo, mangSo[1]);
         if (showInputDialog != null) {
             //----------------------------------------------------------------------------------------------
             if ((int) showInputDialog >= 1 && (int) showInputDialog <= (monTemp.getSoLuong() - 1)) {

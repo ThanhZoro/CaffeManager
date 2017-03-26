@@ -88,7 +88,7 @@ public class Frame_User extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 toDay = new java.util.Date(System.currentTimeMillis());
-                sdfToDay = new SimpleDateFormat("dd/MM/yyyy   HH:mm:ss ");
+                sdfToDay = new SimpleDateFormat("dd/MM/yyyy   HH:mm:ss");
                 jlbNgayGio.setText(sdfToDay.format(toDay.getTime()));
             }
         });
