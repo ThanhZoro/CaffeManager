@@ -8,8 +8,7 @@ package CtrDatabase;
 import CtrObj.*;
 import java.io.UnsupportedEncodingException;
 import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.*;
 import java.util.logging.*;
 
